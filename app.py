@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "Hello! test test"
+    return "Hello! tst"
 
 @app.route("/<name>")
 def user(name):
@@ -12,7 +12,9 @@ def user(name):
 
 @app.route("/admin")
 def admin():
-    return redirect(url_for("user", name="TESTTTTTTT"))
+    return redirect(url_for("user", name="TETT"))
 
 if __name__ == "__main__":
     app.run()
+
+#hello
