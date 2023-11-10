@@ -14,6 +14,10 @@ def user(name):
 def admin():
     return redirect(url_for("user", name="TETT"))
 
+@app.route("/test")
+def test():
+    return redirect("home")
+
 if __name__ == "__main__":
     app.run()
 
