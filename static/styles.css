@@ -1,8 +1,19 @@
 .web-name{
-    font-size: 40px;
+    font-size: 30px;
     text-decoration: none;
     color: white;
+    margin-right: 20px;
+    margin-left: 10px;
+    color: rgb(255, 255, 255);
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
-*{
-    background-color: black;
+#nav-btn{
+    margin-right: 10px;
+    white-space: nowrap;
+}
+
+.alert{
+    width: 40%;
+    margin: auto;
+    word-wrap: break-word;
 }

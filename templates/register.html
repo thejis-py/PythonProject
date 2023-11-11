@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block title%}
+Register
+{% endblock %}
+
+{% block main%}
+<form method="post">
+    <div class="mb-3">
+        <input class="form-control mx-auto w-auto" type="text" id="username" name="username" autofocus placeholder="Username">
+    </div>
+    <div class="mb-3">
+        <input class="form-control mx-auto w-auto" type="password" id="password" name="password" autofocus placeholder="Password">
+    </div>
+    <div class="mb-3">
+        <input class="form-control mx-auto w-auto" type="password" id="password_conf" name="password_conf" autofocus placeholder="Password Confirmation">
+    </div>
+    {% if error_m %}
+    <div class="alert alert-warning" role="alert">
+        {{error_m}}
+    </div>
+    {% endif %}
+    <div class="mb-3">
+        <button class="form-control mx-auto w-auto btn btn-success" type="submit">Register</button>
+    </div>
+</form>
+{% endblock %}
