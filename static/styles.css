@@ -13,7 +13,7 @@
 }
 
 .alert{
-    width: 40%;
+    width: fit-content;
     margin: auto;
     word-wrap: break-word;
 }

@@ -7,11 +7,16 @@ Log in
 {% block main%}
 <form method="post">
     <div class="mb-3">
-        <input class="form-control mx-auto w-auto" type="text" id="username" name="username" required placeholder="Username">
+        <input class="form-control mx-auto w-auto" type="text" id="username" name="username" autofocus required placeholder="Username">
     </div>
     <div class="mb-3">
         <input class="form-control mx-auto w-auto" type="password" id="password" name="password" required placeholder="Password">
     </div>
+    {% if error_m %}
+    <div class="alert alert-warning" role="alert">
+        {{error_m}}
+    </div>
+    {% endif %}
     <div class="mb-3">
         <button class="form-control mx-auto w-auto btn btn-success" type="submit">Log In</button>
     </div>

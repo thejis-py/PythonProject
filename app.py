@@ -1,35 +1,48 @@
-from flask import Flask, redirect, url_for, render_template, session, request
+from flask import Flask, redirect, url_for, render_template, request, session
 from flask_sqlalchemy import SQLAlchemy
-from flask_session import Session
+
+from flask_session import Session as FlaskSession
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
+
 #config sql database
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.sqlite3"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite3"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
-class users(db.Model):
-      _id = db.Column("id", db.Integer, primary_key=True)
-      username = db.Column("username", db.String(100))
-      hash = db.Column("hash", db.String(100))
-      cash = db.Column("cash", db.Float, default=10000)
+#users table
+class Users(db.Model):
+      _id = db.Column(db.Integer, primary_key=True)
+      _username = db.Column(db.String(50), unique=True)
+      _hash = db.Column(db.String())
+      _cash = db.Column(db.Float)
 
       def __init__(self, username, hash, cash=10000):
-            self.username = username
-            self.hash = hash
-            self.cash = cash
+            self._username = username
+            self._hash = hash
+            self._cash = cash
+      def __repr__(self):
+            return f"({self._id}) {self._username} {self._hash} {self._cash}"
+
+
+#print data
+with app.app_context():
+      #Users.query.delete()
+      users = Users.query.all()
+      db.session.commit()
+      print("testt")
+      for i in users:
+            print(i)
 
 #config session
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+FlaskSession(app)
 
 @app.route("/")
 def home():
-    if not session.get("name"):
-        # if not there in the session then redirect to the login page
-        return redirect("/login")
-    return render_template("layout.html")
+    return render_template("index.html")
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
@@ -37,41 +50,57 @@ def register():
            username = request.form.get("username")
            password = request.form.get("password")
            password_conf = request.form.get("password_conf")
-
            if not username:
                  return render_template("register.html", error_m = "Please provide username")
            if not password:
                  return render_template("register.html", error_m = "Please provide password")
 
-           found_user = users.query.filter_by(username=username).first()
+           found_user = Users.query.filter_by(_username=username).first()
+
            if found_user:
+                 print("-----found_user",found_user._id)
                  return render_template("register.html", error_m = "Username is already exist")
            if password != password_conf:
                  return render_template("register.html", error_m = "Password not match")
 
-           user = users(username, password)
-           db.session.add(user)
-           db.session.commit()
+           new_user = Users(username, generate_password_hash(password))
+           with app.app_context():
+                  db.session.add(new_user)
+                  db.session.commit()
+           session["user_id"] = Users.query.filter_by(_username=username).first()._id
 
-           return render_template("register.html", error_m = "successful")
+           return redirect("/")
      return render_template("register.html")
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
 # if form is submited
-	if request.method == "POST":
-		# record the user name
-		session["username"] = request.form.get("username")
-		# redirect to the main page
-		return redirect("/")
-	return render_template("login.html")
+      session.clear()
+      if request.method == "POST":
+            username = request.form.get("username")
+            password = request.form.get("password")
+            if not username:
+                  return render_template("login.html", error_m = "Please provide username")
+            if not password:
+                  return render_template("login.html", error_m = "Please provide password")
+            found_user = Users.query.filter_by(_username=username).first()
+            if not found_user:
+                  return render_template("login.html", error_m="Username not found")
+            if not check_password_hash(found_user._hash, password):
+                  return render_template("login.html", error_m="Incorrect Password")
+            session["user_id"] = found_user._id
+            return redirect("/")
+      return render_template("login.html")
 
 @app.route("/logout")
 def logout():
-	session["name"] = None
-	return redirect("/")
+      #forget session user_id
+      session.clear()
 
+      return redirect("/")
 
 if __name__ == "__main__":
-    db.create_all()
-    app.run()
+      with app.app_context():
+            db.create_all()
+      app.run()
+
