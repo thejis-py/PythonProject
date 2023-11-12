@@ -4,6 +4,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session as FlaskSession
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from helpers import lookup
+
+#api=DM8J043TJV3OYW8H
 app = Flask(__name__)
 
 #config sql database
