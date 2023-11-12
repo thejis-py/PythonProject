@@ -43,9 +43,13 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 FlaskSession(app)
 
-@app.route("/")
+
+@app.route("/", methods=["POST", "GET"])
 def home():
-    return render_template("index.html")
+      if request.method=="POST":
+            print("query", request.form.get("query"))
+            return render_template("quoted.html", data = lookup(request.form.get("query")))
+      return render_template("index.html")
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
