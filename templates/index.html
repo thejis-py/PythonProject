@@ -5,7 +5,7 @@ Home
 {% endblock %}
 
 {% block main%}
-    {{data}}
+
 <!--
     <table class="table">
         <thead>
@@ -26,4 +26,24 @@ Home
         </tbody>
     </table>
     -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Current Price</th>
+                <th>Amount</th>
+                <th>Total Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for n in data %}
+            <tr>
+                <td>{{n["symbol"]}}</td>
+                <td></td>
+                <td>{{n["amount"]}}</td>
+                <td></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session as FlaskSession
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import lookup
+from helpers import lookup, login_required
 from datetime import datetime
 
 #api=DM8J043TJV3OYW8H
@@ -77,12 +77,11 @@ with app.app_context():
             print(i)
       port = Portfolio.query.all()
       db.session.commit()
-      print("testt poooort")
+
       for i in port:
             print(i)
       history = History.query.all()
       db.session.commit()
-      print("inhis")
       for i in history:
             print("his",i)
 
@@ -94,14 +93,13 @@ FlaskSession(app)
 
 
 @app.route("/history")
+@login_required
 def history():
-      history = History.query.all()
       db.session.commit()
-      print("inhis")
-      for i in history:
-            print("his",i)
-      return render_template("history.html", history = History.query.all())
+      return render_template("history.html", history = History.query.filter_by(user_id=session["user_id"]))
+
 @app.route("/sell", methods=["POST", "GET"])
+@login_required
 def sell():
       if request.method == "POST":
             symbol = request.form.get("symbol").upper()
@@ -109,7 +107,7 @@ def sell():
             with app.app_context():
                   history = History("Sell", symbol, lookup(symbol)["price"], amount, session["user_id"])
                   db.session.add(history)
-                  
+
                   found_symbol = Portfolio.query.filter_by(user_id=session["user_id"], symbol=symbol).first()
                   found_symbol.purchase_price -= amount*(found_symbol.purchase_price/found_symbol.amount)
                   found_symbol.amount -= amount
@@ -118,7 +116,9 @@ def sell():
                   db.session.commit()
                   return redirect("/")
       return render_template("sell.html")
+
 @app.route("/buy", methods=["POST", "GET"])
+@login_required
 def buy():
       if request.method == "POST":
             symbol = request.form.get("symbol").upper()
@@ -136,25 +136,25 @@ def buy():
                   found_symbol.purchase_price += round(lookup(symbol)["price"]*amount, 2)
                   found_symbol.amount += amount
 
-
                   db.session.commit()
 
                   return redirect("/")
       return render_template("buy.html")
 
 @app.route("/", methods=["POST", "GET"])
+@login_required
 def home():
       if request.method=="POST":
             return render_template("quoted.html", data = lookup(request.form.get("query")))
 
-      data = []
-
       user_port = Portfolio.query.filter_by(user_id = session["user_id"])
+      """
+      price = []
       for i in user_port:
-            print(i)
-            data.append([i.symbol, lookup(i.symbol)["price"], i.purchase_price, i.amount])
-
-      return render_template("index.html", data=data)
+            price.append(lookup(i["symbol"])["price"])
+      print(price)
+      """
+      return render_template("index.html", data=user_port)
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
@@ -206,6 +206,7 @@ def login():
       return render_template("login.html")
 
 @app.route("/logout")
+@login_required
 def logout():
       #forget session user_id
       session.clear()
