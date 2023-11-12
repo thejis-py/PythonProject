@@ -1,7 +1,20 @@
 {% extends "layout.html" %}
 
 {% block title%}
+Sell
 {% endblock %}
 
 {% block main%}
+    <form method="post">
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" type="text" id="symbol" name="symbol" autofocus placeholder="Symbol">
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" type="text" id="amount" name="amount" autofocus placeholder="Amount">
+        </div>
+        <div class="mb-3">
+            <button class="form-control mx-auto w-auto btn btn-success" type="submit">Sell</button>
+        </div>
+
+    </form>
 {% endblock %}

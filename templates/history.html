@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title%}
+History
+{% endblock %}
+
+{% block main%}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Side</th>
+                <th>Symbol</th>
+                <th>Price</th>
+                <th>Amount</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for n in history %}
+        <tr>
+            <td>{{n["side"]}}</td>
+            <td>{{n["symbol"]}}</td>
+            <td>{{n["price"]}}</td>
+            <td>{{n["amount"]}}</td>
+            <td>{{n["time"]}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
