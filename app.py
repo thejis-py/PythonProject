@@ -68,7 +68,7 @@ class History(db.Model):
 with app.app_context():
       db.create_all()
 
-
+"""
 #print data
 with app.app_context():
       #Users.query.delete()
@@ -87,6 +87,7 @@ with app.app_context():
       for i in history:
             print("his",i)
 
+"""
 
 #config session
 app.config["SESSION_PERMANENT"] = False
