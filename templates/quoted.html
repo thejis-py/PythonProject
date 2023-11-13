@@ -4,7 +4,11 @@
 {% endblock %}
 
 {% block main%}
-    {{data["name"]}}
-    {{data["symbol"]}}
-    {{data["price"]}}
+<p>
+    <h2>{{data["name"]}}</h2>
+    <br>
+    <b>Symbol: </b>{{data["symbol"]}}
+    <br>
+    <b>Current Price: </b>{{data["price"] | thb}}
+</p>
 {% endblock %}

@@ -33,16 +33,40 @@ Home
                 <th>Current Price</th>
                 <th>Amount</th>
                 <th>Total Value</th>
+                <th>Total Purchase Price</th>
+                <th>Unrealized P/L</th>
             </tr>
         </thead>
         <tbody>
             {% for n in data %}
-            <tr>
-                <td>{{n["symbol"]}}</td>
-                <td></td>
-                <td>{{n["amount"]}}</td>
-                <td></td>
-            </tr>
+                {% if unreal[n["symbol"]] > 0%}
+                    <tr class="table-success">
+                        <td><b>{{n["symbol"]}}</b></td>
+                        <td>{{price[n["symbol"]] | thb}}</td>
+                        <td>{{n["amount"]}}</td>
+                        <td>{{total[n["symbol"]] | thb}}</td>
+                        <td>{{n["purchase_price"] | thb}}</td>
+                        <td>{{unreal[n["symbol"]] | thb}}</td>
+                    </tr>
+                {% elif unreal[n["symbol"]] == 0%}
+                    <tr class="table-warning">
+                        <td><b>{{n["symbol"]}}</b></td>
+                        <td>{{price[n["symbol"]] | thb}}</td>
+                        <td>{{n["amount"]}}</td>
+                        <td>{{total[n["symbol"]] | thb}}</td>
+                        <td>{{n["purchase_price"] | thb}}</td>
+                        <td>{{unreal[n["symbol"]] | thb}}</td>
+                    </tr>
+                {% else %}
+                    <tr class="table-danger">
+                        <td><b>{{n["symbol"]}}</b></td>
+                        <td>{{price[n["symbol"]] | thb}}</td>
+                        <td>{{n["amount"]}}</td>
+                        <td>{{total[n["symbol"]] | thb}}</td>
+                        <td>{{n["purchase_price"] | thb}}</td>
+                        <td>{{unreal[n["symbol"]] | thb}}</td>
+                    </tr>
+                {% endif %}
             {% endfor %}
         </tbody>
     </table>

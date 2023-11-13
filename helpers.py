@@ -27,6 +27,50 @@ def lookup(symbol):
     except (KeyError, TypeError, ValueError):
         return None
 
+
+# Python program to convert the currency
+# of one country to that of another country
+
+# Import the modules needed
+import requests
+
+class Currency_convertor:
+	# empty dict to store the conversion rates
+    rates = {}
+    def __init__(self, url):
+        data = requests.get(url).json()
+
+		# Extracting only the rates from the json data
+        self.rates = data["rates"]
+
+	# function to do a simple cross multiplication between
+	# the amount and the conversion rates
+    def convert(self, from_currency, to_currency, amount):
+        if from_currency != 'EUR' :
+            amount = float(amount) / self.rates[from_currency]
+		# limiting the precision to 2 decimal places
+        amount = round(amount * self.rates[to_currency], 2)
+        return amount
+
+
+def thb(value):
+    """Format value as THB."""
+    #c.convert(from_country, to_country, amount)
+    #currency exchange api:3c866d2732c59e2ea6883b7125c60ef4
+    currency_api = "3c866d2732c59e2ea6883b7125c60ef4"
+    url = str.__add__('http://data.fixer.io/api/latest?access_key=', currency_api)
+    c = Currency_convertor(url)
+    value = c.convert("USD","THB", value)
+
+    #c.convert(from_country, to_country, amount)
+    return f"฿{value:,.2f}"
+
+def dtformat(time):
+    """format datetime"""
+    time = str(time).split()
+    time[1] = time[1].split(".")[0]
+    return " ".join(time)
+
 def login_required(f):
     """
     Decorate routes to require login.

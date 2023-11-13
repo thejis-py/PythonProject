@@ -4,11 +4,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session as FlaskSession
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import lookup, login_required
+from helpers import lookup, login_required, thb, dtformat
 from datetime import datetime
 
 #api=DM8J043TJV3OYW8H
 app = Flask(__name__)
+app.jinja_env.filters["thb"] = thb
+app.jinja_env.filters["dt"] = dtformat
 
 #config sql database
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite3"
@@ -96,7 +98,7 @@ FlaskSession(app)
 @login_required
 def history():
       db.session.commit()
-      return render_template("history.html", history = History.query.filter_by(user_id=session["user_id"]))
+      return render_template("history.html", history = History.query.filter_by(user_id=session["user_id"]).order_by(History.time.desc()))
 
 @app.route("/sell", methods=["POST", "GET"])
 @login_required
@@ -112,10 +114,13 @@ def sell():
                   found_symbol.purchase_price -= amount*(found_symbol.purchase_price/found_symbol.amount)
                   found_symbol.amount -= amount
 
-
                   db.session.commit()
-                  return redirect("/")
-      return render_template("sell.html")
+                  if found_symbol.amount == 0:
+                        Portfolio.query.filter_by(user_id=session["user_id"], symbol=symbol).delete()
+                  db.session.commit()
+
+                  return redirect("/history")
+      return render_template("sell.html", portfolio=Portfolio.query.filter_by(user_id=session["user_id"]).order_by(Portfolio.symbol))
 
 @app.route("/buy", methods=["POST", "GET"])
 @login_required
@@ -138,7 +143,7 @@ def buy():
 
                   db.session.commit()
 
-                  return redirect("/")
+                  return redirect("/history")
       return render_template("buy.html")
 
 @app.route("/", methods=["POST", "GET"])
@@ -148,13 +153,18 @@ def home():
             return render_template("quoted.html", data = lookup(request.form.get("query")))
 
       user_port = Portfolio.query.filter_by(user_id = session["user_id"])
-      """
-      price = []
+
+      price = {}
+      total = {}
+      unreal = {}
       for i in user_port:
-            price.append(lookup(i["symbol"])["price"])
+            price[i.symbol] = (lookup(i.symbol)["price"])
+            total[i.symbol] = (lookup(i.symbol)["price"])*i.amount
+            unreal[i.symbol] = total[i.symbol]-i.purchase_price
+
       print(price)
-      """
-      return render_template("index.html", data=user_port)
+
+      return render_template("index.html", data=user_port, price = price, total=total, unreal=unreal)
 
 @app.route("/register", methods=["POST", "GET"])
 def register():

@@ -6,14 +6,24 @@ Sell
 
 {% block main%}
     <form method="post">
+        <!--
         <div class="mb-3">
             <input class="form-control mx-auto w-auto" type="text" id="symbol" name="symbol" autofocus placeholder="Symbol">
         </div>
+        -->
         <div class="mb-3">
-            <input class="form-control mx-auto w-auto" type="text" id="amount" name="amount" autofocus placeholder="Amount">
+            <select name="symbol" id="symbol" required>
+                <option value="default" default selected disabled>Select stock's symbol</option>
+                {% for n in portfolio %}
+                <option name="symbol" value='{{n["symbol"]}}'>{{n["symbol"]}}</option>
+                {% endfor %}
+              </select>
         </div>
         <div class="mb-3">
-            <button class="form-control mx-auto w-auto btn btn-success" type="submit">Sell</button>
+            <input class="form-control mx-auto w-auto" type="text" id="amount" name="amount"autocomplete="off" autofocus placeholder="Amount">
+        </div>
+        <div class="mb-3">
+            <button class="form-control mx-auto w-auto btn btn-danger" type="submit">Sell</button>
         </div>
 
     </form>
