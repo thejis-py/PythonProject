@@ -39,7 +39,7 @@ Home
         </thead>
         <tbody>
             {% for n in data %}
-                {% if unreal[n["symbol"]] > 0%}
+                {% if unreal[n["symbol"]] > 0.01%}
                     <tr class="table-success">
                         <td><b>{{n["symbol"]}}</b></td>
                         <td>{{price[n["symbol"]] | thb}}</td>
@@ -48,7 +48,7 @@ Home
                         <td>{{n["purchase_price"] | thb}}</td>
                         <td>{{unreal[n["symbol"]] | thb}}</td>
                     </tr>
-                {% elif unreal[n["symbol"]] == 0%}
+                {% elif unreal[n["symbol"]] > -0.01%}
                     <tr class="table-warning">
                         <td><b>{{n["symbol"]}}</b></td>
                         <td>{{price[n["symbol"]] | thb}}</td>

@@ -55,15 +55,16 @@ class Currency_convertor:
 
 def thb(value):
     """Format value as THB."""
+    """
     #c.convert(from_country, to_country, amount)
     #currency exchange api:3c866d2732c59e2ea6883b7125c60ef4
     currency_api = "3c866d2732c59e2ea6883b7125c60ef4"
     url = str.__add__('http://data.fixer.io/api/latest?access_key=', currency_api)
     c = Currency_convertor(url)
     value = c.convert("USD","THB", value)
-
+    """
     #c.convert(from_country, to_country, amount)
-    return f"฿{value:,.2f}"
+    return f"${value:,.2f}"
 
 def dtformat(time):
     """format datetime"""

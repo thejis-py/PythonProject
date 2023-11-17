@@ -130,15 +130,18 @@ def buy():
             symbol = request.form.get("symbol").upper()
             amount = int(request.form.get("amount"))
             with app.app_context():
+                  if not lookup(symbol):
+                        return render_template("buy.html", error_m = "symbol not exist")
                   history = History("Buy", symbol, lookup(symbol)["price"], amount, session["user_id"])
                   db.session.add(history)
+
 
                   found_symbol = Portfolio.query.filter_by(user_id=session["user_id"], symbol=symbol).first()
                   if not found_symbol:
                         new_port = Portfolio(symbol, amount, round(float(lookup(symbol)["price"])*amount, 2), session["user_id"])
                         db.session.add(new_port)
                         db.session.commit()
-                        return redirect("/")
+                        return redirect("/history")
                   found_symbol.purchase_price += round(lookup(symbol)["price"]*amount, 2)
                   found_symbol.amount += amount
 
